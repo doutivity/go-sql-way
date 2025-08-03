@@ -17,8 +17,8 @@ jobs:
         with:
           go-version: '1.24'
 
-      - name: Start PostgreSQL via docker-compose
-        run: docker-compose --env-file .env.test -f docker-compose.test.yml up -d
+      - name: Start PostgreSQL via Docker Compose
+        run: docker compose --env-file .env.test -f docker-compose.test.yml up -d
 
       - name: Wait for PostgreSQL to be healthy
         run: |
@@ -32,4 +32,4 @@ jobs:
         run: env $(cat .env.test | xargs) go test ./... -v
 
       - name: Shut down Docker Compose
-        run: docker-compose -f docker-compose.test.yml down
+        run: docker compose -f docker-compose.test.yml down
