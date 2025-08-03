@@ -1,0 +1,13 @@
+name: Go tests with PostgreSQL (Testcontainers)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  tests:
+    name: Go tests with PostgreSQL via Testcontainers
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: TODO: Implement testing using Testcontainers in Go
+        run: echo "Coming soon: Go tests using testcontainers-go"

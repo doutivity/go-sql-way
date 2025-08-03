@@ -1,0 +1,35 @@
+name: Go tests with PostgreSQL (Docker Compose)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  tests:
+    name: Go tests with PostgreSQL via Docker Compose
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+
+      - name: Start PostgreSQL via docker-compose
+        run: docker-compose --env-file .env.test -f docker-compose.test.yml up -d
+
+      - name: Wait for PostgreSQL to be healthy
+        run: |
+          for i in {1..10}; do
+            docker exec go-sql-way-postgres psql -U go_user -d go_sql_way -c "SELECT 1" && break
+            echo "Waiting for database..."
+            sleep 2
+          done
+
+      - name: Run Go tests
+        run: env $(cat .env.test | xargs) go test ./... -v
+
+      - name: Shut down Docker Compose
+        run: docker-compose -f docker-compose.test.yml down
