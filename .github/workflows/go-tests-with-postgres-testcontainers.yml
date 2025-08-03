@@ -9,5 +9,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: TODO: Implement testing using Testcontainers in Go
-        run: echo "Coming soon: Go tests using testcontainers-go"
+      - name: "TODO: Implement testing using Testcontainers in Go"
+        run: |
+          echo "Coming soon: Go tests using testcontainers-go"
