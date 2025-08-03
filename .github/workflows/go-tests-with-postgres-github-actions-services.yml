@@ -8,7 +8,44 @@ jobs:
     name: Go tests with PostgreSQL as GitHub Actions service
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:17.5
+        env:
+          POSTGRES_USER: gaps_user # GitHub Actions PostgreSQL service user
+          POSTGRES_PASSWORD: gaps_pass # GitHub Actions PostgreSQL service password
+          POSTGRES_DB: gaps_db # GitHub Actions PostgreSQL service database
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U gaps_user"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: gaps_db
+      POSTGRES_USER: gaps_user
+      POSTGRES_PASSWORD: gaps_pass
+
     steps:
-      - name: "TODO: Implement testing with PostgreSQL via GitHub Actions service"
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+
+      - name: Wait for PostgreSQL to be ready
         run: |
-          echo "Coming soon: Go tests using PostgreSQL service"
+          for i in {1..10}; do
+            pg_isready -h localhost -U $POSTGRES_USER && break
+            echo "Waiting for PostgreSQL..."
+            sleep 2
+          done
+
+      - name: Run Go tests
+        run: go test ./... -v
